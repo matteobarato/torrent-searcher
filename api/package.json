@@ -1,0 +1,22 @@
+{
+  "name": "torrentsearch",
+  "version": "0.0.1",
+  "description": "smart torrent search api provider",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js",
+    "doc": "apidoc -i . -o apidoc"
+  },
+  "author": "Matteo Barato",
+  "license": "ISC",
+  "dependencies": {
+    "-": "^0.0.1",
+    "apidoc": "^0.50.2",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "g": "^2.0.1",
+    "serialize-error": "^9.0.0",
+    "torrent-search-api": "^2.1.4"
+  },
+  "type": "module"
+}
