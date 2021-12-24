@@ -27,8 +27,8 @@ app.get("/", (req, res) => {
  * @api {get} /search Cerca torrent
  * @apiGroup TorrentSearchProvider
  * @apiParam {String} query Parole chiave da cercare
- * @apiParam {String} category Categoria in cui cercare
- * @apiParam {Number} limit Limite numero di risultati
+ * @apiParam {String} [category] category Categoria in cui cercare
+ * @apiParam {Number} [limit=20] limit Limite numero di risultati
  * @apiSuccess {TorrentResult[]} result Lista di torrent che soddisfano la ricerca 
  * @apiError {Object} error Informazioni di debug riguardo l'eccezione sollevata
  * */
