@@ -1,4 +1,17 @@
 import  TorrentSearchApi from "torrent-search-api";
+import { CacheContainer } from 'node-ts-cache'
+import { NodeFsStorage } from "node-ts-cache-storage-node-fs"
+
+const tsCache = new CacheContainer(new NodeFsStorage('./cache/torrent-search-cache.json'))
+
+const calculateKeyCache = function (params) {
+    let key = ''
+    for (let p of params){
+        key += p ? p.toString().toLowerCase()+'&' : '' 
+    }
+    key = key.slice(0, -1); 
+    return key
+}
 
 /** Torrent Search Api Provider. */
 export class TorrentSearchProvider {
@@ -9,7 +22,7 @@ export class TorrentSearchProvider {
      */
     constructor(verbose = false) {
         this.verbose = verbose;
-        this.query_limit = 100
+        this.query_limit = 200
         this.api = TorrentSearchApi;
         this.api.enablePublicProviders();
         this.api_categories = this.getAvailableCategories();
@@ -23,12 +36,23 @@ export class TorrentSearchProvider {
      * @param {boolean} limit - Limit the result to a number.
      * @return {torrent array} List of torrents matching the query
      */
-    async search(query, category, limit = 20) {
+    async search(query, category, limit = 50) {
         if (category && !this.assertCategory(category))
             throw new Error(`Category "${category}" is not available. Choose between: "${this.api_categories}"`);
 
-        let torrents = await this.api.search(query, category, Math.min(limit, this.query_limit));
+        let torrents = []
+        let cachedResult = await tsCache.getItem(calculateKeyCache([query,category,limit]))
+
+        if (cachedResult){
+            torrents = cachedResult
+        }else{
+            torrents = await this.api.search(query, category, Math.min(limit, this.query_limit));
+            await tsCache.setItem(calculateKeyCache([query,category,limit]), torrents, {ttl: 60*60*24}) // ttl:1day
+        }
+
         this._l("search torrents", torrents);
+        torrents = torrents.filter(x=> x.seeds || x.peers || x.numFiles)
+        torrents = torrents.map(x=> {x['hash'] = this.extractHashFromMagnet(x.magnet); return x})
         return torrents;
     }
 
@@ -70,15 +94,13 @@ export class TorrentSearchProvider {
             return console[level](`|${label.toUpperCase()}|`, item);
     }
 
+    extractHashFromMagnet(magnet){
+        if (!magnet) return '';
+        const current_url = new URL(magnet);
+        const search_params = current_url.searchParams;
+        const hash = search_params.get('xt');
+        return hash;
+    }
+
 }
-
-// TEST
-// (async () => {
-//     const TS = new TorrentSearchProvider(true);
-//     console.log(TS.availableCategories());
-
-//     const torrent = await TS.search("1080p ita", "Movies");
-//     console.log(torrent);
-// })();
-
 

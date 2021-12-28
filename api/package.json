@@ -4,6 +4,7 @@
   "description": "smart torrent search api provider",
   "main": "app.js",
   "scripts": {
+    "start": "pm2 start app.js",
     "test": "node app.js",
     "doc": "apidoc -i . -o apidoc"
   },
@@ -15,6 +16,8 @@
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "g": "^2.0.1",
+    "node-ts-cache": "^4.4.0",
+    "node-ts-cache-storage-node-fs": "^4.4.0",
     "serialize-error": "^9.0.0",
     "torrent-search-api": "^2.1.4"
   },
