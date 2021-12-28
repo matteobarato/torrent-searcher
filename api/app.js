@@ -38,10 +38,10 @@ app.get("/", (req, res) => {
  * */
 app.get("/search", (req, res) => {
     const query = req.query.q;
-    // if (!query) {
-    //     res.status(400);
-    //     return res.json({ result: [], error: "Parameter 'q' is required!" });
-    // }
+    if (!query) {
+        res.status(400);
+        return res.json({ result: [], error: "Parameter 'q' is required!" });
+    }
     const category = req.query.cat || undefined;
     const limit = req.query.limit || undefined;
 

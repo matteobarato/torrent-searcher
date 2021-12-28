@@ -20,6 +20,6 @@
     "node-ts-cache-storage-node-fs": "^4.4.0",
     "serialize-error": "^9.0.0",
     "torrent-search-api": "^2.1.4"
-  },
+  }, 
   "type": "module"
 }
